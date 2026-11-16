@@ -18,8 +18,6 @@ jobs:
       - run: npx cap add android
       - name: Imagens das bandeiras
         run: mkdir -p www/flags && cp node_modules/flag-icons/flags/4x3/*.svg www/flags/ && ls www/flags | wc -l
-      - name: Compatibilidade Android 5.0
-        run: sed -i 's/minSdkVersion = 22/minSdkVersion = 21/' android/variables.gradle && grep minSdk android/variables.gradle
       - name: Icone da app
         continue-on-error: true
         run: npx --yes @capacitor/assets@3.0.5 generate --android
