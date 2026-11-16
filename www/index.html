@@ -44,7 +44,8 @@ function dbg(m){const d=document.getElementById('dbg');if(d)d.textContent=m}
 async function say(txt){
   try{
     if(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()){
-      const T=Capacitor.registerPlugin('TextToSpeech');
+      const T=Capacitor.Plugins&&Capacitor.Plugins.TextToSpeech;
+      if(!T)throw new Error('plugin TextToSpeech nao encontrado');
       try{await T.stop()}catch(e){}
       await T.speak({text:txt,lang:'pt-PT',rate:0.9,pitch:1.0,volume:1.0,category:'ambient'});
       dbg('');return;
