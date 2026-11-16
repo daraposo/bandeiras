@@ -16,6 +16,8 @@ jobs:
           java-version: 17
       - run: npm install
       - run: npx cap add android
+      - name: Permitir motor de voz (Android 11+)
+        run: sed -i 's#</manifest>#<queries><intent><action android:name="android.intent.action.TTS_SERVICE"/></intent></queries></manifest>#' android/app/src/main/AndroidManifest.xml
       - run: npx cap sync android
       - run: chmod +x android/gradlew && cd android && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
