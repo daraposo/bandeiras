@@ -23,6 +23,13 @@ button{font:inherit;font-weight:700;font-size:20px;border:0;border-radius:999px;
 button.alt{background:var(--ring);color:var(--ink)}
 .count{opacity:.7;margin-top:12px;font-size:16px}
 h1{font-size:clamp(30px,9vw,44px);margin:8px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.chip{font-size:17px;padding:8px 16px;background:var(--ring);color:var(--ink)}
+.chip.on{background:var(--accent);color:#fff}
+.tset{display:flex;gap:12px;align-items:center;justify-content:center;font-size:22px;margin:8px 0}
+.tset b{min-width:2.5em;color:var(--accent)}
+button.sm{padding:4px 18px;font-size:26px;line-height:1.1}
+body{align-items:flex-start;overflow-y:auto}.app{margin:auto}
 </style>
 </head>
 <body>
@@ -30,9 +37,19 @@ h1{font-size:clamp(30px,9vw,44px);margin:8px 0}
 <div id="dbg" style="position:fixed;bottom:6px;left:0;right:0;font-size:12px;opacity:.7;text-align:center;padding:0 8px"></div>
 <script>
 const RAW="AF:Afeganistão|ZA:África do Sul|AL:Albânia|DE:Alemanha|AD:Andorra|AO:Angola|AG:Antígua e Barbuda|SA:Arábia Saudita|DZ:Argélia|AR:Argentina|AM:Arménia|AU:Austrália|AT:Áustria|AZ:Azerbaijão|BS:Baamas|BD:Bangladeche|BB:Barbados|BH:Barém|BE:Bélgica|BZ:Belize|BJ:Benim|BY:Bielorrússia|BO:Bolívia|BA:Bósnia e Herzegovina|BW:Botsuana|BR:Brasil|BN:Brunei|BG:Bulgária|BF:Burquina Faso|BI:Burúndi|BT:Butão|CV:Cabo Verde|CM:Camarões|KH:Camboja|CA:Canadá|QA:Catar|KZ:Cazaquistão|TD:Chade|CL:Chile|CN:China|CY:Chipre|CO:Colômbia|KM:Comores|CG:Congo|CD:República Democrática do Congo|KP:Coreia do Norte|KR:Coreia do Sul|CI:Costa do Marfim|CR:Costa Rica|HR:Croácia|CU:Cuba|DK:Dinamarca|DJ:Jibuti|DM:Dominica|EG:Egito|SV:El Salvador|AE:Emirados Árabes Unidos|EC:Equador|ER:Eritreia|SK:Eslováquia|SI:Eslovénia|ES:Espanha|US:Estados Unidos|EE:Estónia|SZ:Essuatíni|ET:Etiópia|FJ:Fiji|PH:Filipinas|FI:Finlândia|FR:França|GA:Gabão|GM:Gâmbia|GH:Gana|GE:Geórgia|GD:Granada|GR:Grécia|GT:Guatemala|GY:Guiana|GN:Guiné|GQ:Guiné Equatorial|GW:Guiné-Bissau|HT:Haiti|HN:Honduras|HU:Hungria|YE:Iémen|MH:Ilhas Marshall|SB:Ilhas Salomão|IN:Índia|ID:Indonésia|IR:Irão|IQ:Iraque|IE:Irlanda|IS:Islândia|IL:Israel|IT:Itália|JM:Jamaica|JP:Japão|JO:Jordânia|KW:Kuwait|LA:Laos|LS:Lesoto|LV:Letónia|LB:Líbano|LR:Libéria|LY:Líbia|LI:Listenstaine|LT:Lituânia|LU:Luxemburgo|MK:Macedónia do Norte|MG:Madagáscar|MY:Malásia|MW:Maláui|MV:Maldivas|ML:Mali|MT:Malta|MA:Marrocos|MU:Maurícia|MR:Mauritânia|MX:México|MM:Mianmar|FM:Micronésia|MZ:Moçambique|MD:Moldávia|MC:Mónaco|MN:Mongólia|ME:Montenegro|NA:Namíbia|NR:Nauru|NP:Nepal|NI:Nicarágua|NE:Níger|NG:Nigéria|NO:Noruega|NZ:Nova Zelândia|OM:Omã|NL:Países Baixos|PW:Palau|PS:Palestina|PA:Panamá|PG:Papua-Nova Guiné|PK:Paquistão|PY:Paraguai|PE:Peru|PL:Polónia|PT:Portugal|KE:Quénia|KG:Quirguistão|KI:Quiribáti|GB:Reino Unido|CF:República Centro-Africana|CZ:Chéquia|DO:República Dominicana|RO:Roménia|RW:Ruanda|RU:Rússia|WS:Samoa|SM:São Marinho|LC:Santa Lúcia|KN:São Cristóvão e Neves|ST:São Tomé e Príncipe|VC:São Vicente e Granadinas|SC:Seicheles|SN:Senegal|SL:Serra Leoa|RS:Sérvia|SG:Singapura|SY:Síria|SO:Somália|LK:Sri Lanca|SD:Sudão|SS:Sudão do Sul|SE:Suécia|CH:Suíça|SR:Suriname|TH:Tailândia|TJ:Tajiquistão|TZ:Tanzânia|TL:Timor-Leste|TG:Togo|TO:Tonga|TT:Trindade e Tobago|TN:Tunísia|TM:Turquemenistão|TR:Turquia|TV:Tuvalu|UA:Ucrânia|UG:Uganda|UY:Uruguai|UZ:Usbequistão|VU:Vanuatu|VA:Vaticano|VE:Venezuela|VN:Vietname|ZM:Zâmbia|ZW:Zimbabué";
-const SECS=15, SHOW=4;
+let SECS=15;const SHOW=4;let sel='Todos';
 const emoji=c=>[...c].map(x=>String.fromCodePoint(0x1F1E6+x.charCodeAt(0)-65)).join('');
-let list=RAW.split('|').map(s=>{const[c,n]=s.split(':');return{f:emoji(c),n}});
+const EU=new Set('AL AD AT BY BE BA BG HR CY CZ DK EE FI FR DE GR HU IS IE IT LV LI LT LU MT MD MC ME NL MK NO PL PT RO RU SM RS SK SI ES SE CH UA GB VA'.split(' '));
+const AF=new Set('DZ AO BJ BW BF BI CV CM CF TD KM CG CD CI DJ EG GQ ER SZ ET GA GM GH GN GW KE LS LR LY MG MW ML MR MU MA MZ NA NE NG RW ST SN SC SL SO ZA SS SD TZ TG TN UG ZM ZW'.split(' '));
+const OC=new Set('AU FJ KI MH FM NR NZ PW PG WS SB TO TV VU'.split(' '));
+const AM=new Set('AG AR BS BB BZ BO BR CA CL CO CR CU DM DO EC SV GD GT GY HT HN JM MX NI PA PY PE KN LC VC SR TT US UY VE'.split(' '));
+const contOf=c=>EU.has(c)?'Europa':AF.has(c)?'África':OC.has(c)?'Oceânia':AM.has(c)?'América':'Ásia';
+const ALL=RAW.split('|').map(s=>{const[c,n]=s.split(':');return{f:emoji(c),n,k:contOf(c)}});
+const CONTS=['Todos','Europa','África','Ásia','América','Oceânia'];
+const pool=()=>sel==='Todos'?ALL.slice():ALL.filter(x=>x.k===sel);
+let list=[];
+try{const sv=JSON.parse(localStorage.getItem('bd')||'{}');if(sv.secs)SECS=sv.secs;if(CONTS.includes(sv.sel))sel=sv.sel}catch(e){}
+function save(){try{localStorage.setItem('bd',JSON.stringify({secs:SECS,sel}))}catch(e){}}
 let i=0,t=SECS,timer=null,paused=false,phase='idle',voice=null;
 const app=document.getElementById('app');
 const C=2*Math.PI*54;
@@ -55,13 +72,17 @@ async function say(txt){
 }
 
 function home(){
-  clearInterval(timer);phase='idle';
-  app.innerHTML=`<div class="card"><div class="flag">🌍</div><h1>Que Bandeira É Esta?</h1>
-  <p class="q">Adivinha o país antes de acabar o tempo!</p>
+  clearInterval(timer);clearTimeout(timer);phase='idle';
+  app.innerHTML=`<div class="card"><div class="flag" style="font-size:clamp(60px,18vw,90px)">🌍</div><h1>Que Bandeira É Esta?</h1>
+  <div class="chips">${CONTS.map(c=>`<button class="chip ${c===sel?'on':''}" data-c="${c}">${c}</button>`).join('')}</div>
+  <div class="tset"><span>Tempo:</span><button class="alt sm" id="tm">−</button><b>${SECS}s</b><button class="alt sm" id="tp">+</button></div>
   <div class="row"><button id="go">▶ Começar</button><button class="alt" id="tv">🔊 Testar voz</button></div>
-  <p class="count">${list.length} bandeiras do mundo</p></div>`;
+  <p class="count">${pool().length} bandeiras</p></div>`;
+  app.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{sel=b.dataset.c;save();home()});
+  document.getElementById('tm').onclick=()=>{SECS=Math.max(5,SECS-5);save();home()};
+  document.getElementById('tp').onclick=()=>{SECS=Math.min(60,SECS+5);save();home()};
   document.getElementById('tv').onclick=()=>say('Portugal');
-  document.getElementById('go').onclick=()=>{shuffle(list);i=0;show()};
+  document.getElementById('go').onclick=()=>{list=shuffle(pool());i=0;show()};
 }
 function show(){
   if(i>=list.length){app.innerHTML=`<div class="card"><div class="flag">🎉</div><h1>Parabéns!</h1><p class="q">Viste todas as bandeiras do mundo!</p><div class="row"><button id="again">Jogar outra vez</button></div></div>`;document.getElementById('again').onclick=home;return}
