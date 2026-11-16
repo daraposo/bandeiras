@@ -18,7 +18,7 @@ jobs:
       - run: npx cap add android
       - name: Icone da app
         continue-on-error: true
-        run: npx capacitor-assets generate --android
+        run: npx --yes @capacitor/assets@3.0.5 generate --android
       - name: Permitir motor de voz (Android 11+)
         run: sed -i 's#</manifest>#<queries><intent><action android:name="android.intent.action.TTS_SERVICE"/></intent></queries></manifest>#' android/app/src/main/AndroidManifest.xml
       - run: npx cap sync android
