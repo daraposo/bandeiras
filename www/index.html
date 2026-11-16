@@ -10,26 +10,28 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a33;--card:#1d2748;--ink:#f1f4ff;--accent:#ff9254;--ok:#43d492;--ring:#33406b}}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:system-ui,'Segoe UI',Roboto,sans-serif;display:flex;align-items:center;justify-content:center}
-.app{width:min(94vw,560px);text-align:center;padding:12px}
+.app{width:94vw;max-width:560px;text-align:center;padding:12px}
 .card{background:var(--card);border-radius:32px;padding:20px 16px 24px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
-.flag{font-family:'Noto Color Emoji',sans-serif;font-size:clamp(110px,34vw,190px);line-height:1.1;min-height:1.2em}
+.flag{font-family:'Noto Color Emoji',sans-serif;font-size:110px;font-size:clamp(110px,34vw,190px);line-height:1.1;min-height:1.2em}
 .timer{position:relative;width:130px;height:130px;margin:6px auto}
 .timer svg{transform:rotate(-90deg)}
-.timer .n{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:700;color:var(--accent)}
-.name{font-size:clamp(30px,9vw,46px);font-weight:700;color:var(--ok);min-height:1.3em;margin:6px 0}
+.timer .n{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:700;color:var(--accent)}
+.name{font-size:34px;font-size:clamp(30px,9vw,46px);font-weight:700;color:var(--ok);min-height:1.3em;margin:6px 0}
 .q{font-size:22px;font-weight:500;margin:0}
-.row{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.row{display:flex;justify-content:center;margin-top:14px;flex-wrap:wrap}
 button{font:inherit;font-weight:700;font-size:20px;border:0;border-radius:999px;padding:12px 24px;background:var(--accent);color:#fff;cursor:pointer}
 button.alt{background:var(--ring);color:var(--ink)}
 .count{opacity:.7;margin-top:12px;font-size:16px}
-h1{font-size:clamp(30px,9vw,44px);margin:8px 0}
-.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+h1{font-size:32px;font-size:clamp(30px,9vw,44px);margin:8px 0}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;margin:10px 0}
 .chip{font-size:17px;padding:8px 16px;background:var(--ring);color:var(--ink)}
 .chip.on{background:var(--accent);color:#fff}
-.tset{display:flex;gap:12px;align-items:center;justify-content:center;font-size:22px;margin:8px 0}
+.tset{display:flex;align-items:center;justify-content:center;font-size:22px;margin:8px 0}
 .tset b{min-width:2.5em;color:var(--accent)}
 button.sm{padding:4px 18px;font-size:26px;line-height:1.1}
 body{align-items:flex-start;overflow-y:auto}.app{margin:auto}
+.row>button{margin:5px}.chips>button{margin:4px}.tset>*{margin:0 7px}
+.flag img{display:block;margin:0 auto;width:72vw;max-width:340px;height:auto;border-radius:10px;border:1px solid rgba(0,0,0,.15);box-shadow:0 4px 14px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
@@ -44,7 +46,7 @@ const AF=new Set('DZ AO BJ BW BF BI CV CM CF TD KM CG CD CI DJ EG GQ ER SZ ET GA
 const OC=new Set('AU FJ KI MH FM NR NZ PW PG WS SB TO TV VU'.split(' '));
 const AM=new Set('AG AR BS BB BZ BO BR CA CL CO CR CU DM DO EC SV GD GT GY HT HN JM MX NI PA PY PE KN LC VC SR TT US UY VE'.split(' '));
 const contOf=c=>EU.has(c)?'Europa':AF.has(c)?'África':OC.has(c)?'Oceânia':AM.has(c)?'América':'Ásia';
-const ALL=RAW.split('|').map(s=>{const[c,n]=s.split(':');return{f:emoji(c),n,k:contOf(c)}});
+const ALL=RAW.split('|').map(s=>{const[c,n]=s.split(':');return{f:emoji(c),n,k:contOf(c),c:c.toLowerCase()}});
 const CONTS=['Todos','Europa','África','Ásia','América','Oceânia'];
 const pool=()=>sel==='Todos'?ALL.slice():ALL.filter(x=>x.k===sel);
 let list=[];
@@ -73,10 +75,10 @@ async function say(txt){
 
 function home(){
   clearInterval(timer);clearTimeout(timer);phase='idle';
-  app.innerHTML=`<div class="card"><div class="flag" style="font-size:clamp(60px,18vw,90px)">🌍</div><h1>Que Bandeira É Esta?</h1>
+  app.innerHTML=`<div class="card"><div class="flag" style="font-size:72px">🌍</div><h1>Que Bandeira É Esta?</h1>
   <div class="chips">${CONTS.map(c=>`<button class="chip ${c===sel?'on':''}" data-c="${c}">${c}</button>`).join('')}</div>
   <div class="tset"><span>Tempo:</span><button class="alt sm" id="tm">−</button><b>${SECS}s</b><button class="alt sm" id="tp">+</button></div>
-  <div class="row"><button id="go">▶ Começar</button><button class="alt" id="tv">🔊 Testar voz</button></div>
+  <div class="row"><button id="go">Começar</button><button class="alt" id="tv">🔊 Testar voz</button></div>
   <p class="count">${pool().length} bandeiras</p></div>`;
   app.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{sel=b.dataset.c;save();home()});
   document.getElementById('tm').onclick=()=>{SECS=Math.max(5,SECS-5);save();home()};
@@ -87,13 +89,13 @@ function home(){
 function show(){
   if(i>=list.length){app.innerHTML=`<div class="card"><div class="flag">🎉</div><h1>Parabéns!</h1><p class="q">Viste todas as bandeiras do mundo!</p><div class="row"><button id="again">Jogar outra vez</button></div></div>`;document.getElementById('again').onclick=home;return}
   const x=list[i];t=SECS;phase='count';paused=false;
-  app.innerHTML=`<div class="card"><div class="flag">${x.f}</div>
+  app.innerHTML=`<div class="card"><div class="flag"><img src="flags/${x.c}.svg" alt="" onerror="this.parentNode.textContent='${x.f}'"></div>
   <div class="timer"><svg width="130" height="130" viewBox="0 0 130 130"><circle cx="65" cy="65" r="54" fill="none" stroke="var(--ring)" stroke-width="12"/><circle id="arc" cx="65" cy="65" r="54" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="0" style="transition:stroke-dashoffset 1s linear"/></svg><div class="n" id="n">${t}</div></div>
   <div class="name" id="name">Que país é este?</div>
-  <div class="row"><button class="alt" id="pause">⏸ Pausa</button><button id="skip">Mostrar ⏭</button></div>
+  <div class="row"><button class="alt" id="pause">Pausa</button><button id="skip">Mostrar</button></div>
   <p class="count">${i+1} de ${list.length}</p></div>`;
   document.getElementById('skip').onclick=reveal;
-  document.getElementById('pause').onclick=e=>{paused=!paused;e.target.textContent=paused?'▶ Continuar':'⏸ Pausa'};
+  document.getElementById('pause').onclick=e=>{paused=!paused;e.target.textContent=paused?'Continuar':'Pausa'};
   clearInterval(timer);
   timer=setInterval(()=>{
     if(paused)return;
@@ -108,7 +110,7 @@ function reveal(){
   document.getElementById('n').textContent='🎈';
   document.getElementById('arc').style.strokeDashoffset=0;
   document.getElementById('name').textContent=x.n;
-  document.getElementById('skip').textContent='Seguinte ⏭';
+  document.getElementById('skip').textContent='Seguinte';
   document.getElementById('skip').onclick=next;
   document.getElementById('pause').style.display='none';
   say(x.n);
