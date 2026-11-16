@@ -1,0 +1,14 @@
+COMO OBTER O APK (10 minutos, grátis)
+
+1. Cria conta em github.com (se ainda não tens).
+2. Clica em "+" > "New repository". Nome: bandeiras. Deixa "Public". Cria.
+3. Clica em "uploading an existing file".
+4. Arrasta para lá TUDO o que está dentro desta pasta (incluindo a pasta
+   "www" e a pasta ".github"). Clica "Commit changes".
+   - Se a pasta .github não subir (pastas escondidas), clica em
+     "Add file" > "Create new file", escreve no nome:
+     .github/workflows/build.yml  e cola o conteúdo do ficheiro build.yml.
+5. Abre o separador "Actions". Espera 3-5 minutos até aparecer um visto verde.
+6. Clica na execução e, em "Artifacts", descarrega "Bandeiras-apk" (zip).
+7. Dentro do zip está app-debug.apk. Passa-o para o telemóvel e instala
+   (o Android pede para permitir "instalar de fontes desconhecidas").

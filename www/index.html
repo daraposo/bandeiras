@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Que Bandeira É Esta?</title>
+<style>
+:root{--bg:#e8f6ff;--card:#fff;--ink:#23326b;--accent:#ff7a30;--ok:#1fa968;--ring:#d7e6f5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a33;--card:#1d2748;--ink:#f1f4ff;--accent:#ff9254;--ok:#43d492;--ring:#33406b}}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,'Segoe UI',Roboto,sans-serif;display:flex;align-items:center;justify-content:center}
+.app{width:min(94vw,560px);text-align:center;padding:12px}
+.card{background:var(--card);border-radius:32px;padding:20px 16px 24px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.flag{font-family:'Noto Color Emoji',sans-serif;font-size:clamp(110px,34vw,190px);line-height:1.1;min-height:1.2em}
+.timer{position:relative;width:130px;height:130px;margin:6px auto}
+.timer svg{transform:rotate(-90deg)}
+.timer .n{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:700;color:var(--accent)}
+.name{font-size:clamp(30px,9vw,46px);font-weight:700;color:var(--ok);min-height:1.3em;margin:6px 0}
+.q{font-size:22px;font-weight:500;margin:0}
+.row{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+button{font:inherit;font-weight:700;font-size:20px;border:0;border-radius:999px;padding:12px 24px;background:var(--accent);color:#fff;cursor:pointer}
+button.alt{background:var(--ring);color:var(--ink)}
+.count{opacity:.7;margin-top:12px;font-size:16px}
+h1{font-size:clamp(30px,9vw,44px);margin:8px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+const RAW="AF:Afeganistão|ZA:África do Sul|AL:Albânia|DE:Alemanha|AD:Andorra|AO:Angola|AG:Antígua e Barbuda|SA:Arábia Saudita|DZ:Argélia|AR:Argentina|AM:Arménia|AU:Austrália|AT:Áustria|AZ:Azerbaijão|BS:Baamas|BD:Bangladeche|BB:Barbados|BH:Barém|BE:Bélgica|BZ:Belize|BJ:Benim|BY:Bielorrússia|BO:Bolívia|BA:Bósnia e Herzegovina|BW:Botsuana|BR:Brasil|BN:Brunei|BG:Bulgária|BF:Burquina Faso|BI:Burúndi|BT:Butão|CV:Cabo Verde|CM:Camarões|KH:Camboja|CA:Canadá|QA:Catar|KZ:Cazaquistão|TD:Chade|CL:Chile|CN:China|CY:Chipre|CO:Colômbia|KM:Comores|CG:Congo|CD:República Democrática do Congo|KP:Coreia do Norte|KR:Coreia do Sul|CI:Costa do Marfim|CR:Costa Rica|HR:Croácia|CU:Cuba|DK:Dinamarca|DJ:Jibuti|DM:Dominica|EG:Egito|SV:El Salvador|AE:Emirados Árabes Unidos|EC:Equador|ER:Eritreia|SK:Eslováquia|SI:Eslovénia|ES:Espanha|US:Estados Unidos|EE:Estónia|SZ:Essuatíni|ET:Etiópia|FJ:Fiji|PH:Filipinas|FI:Finlândia|FR:França|GA:Gabão|GM:Gâmbia|GH:Gana|GE:Geórgia|GD:Granada|GR:Grécia|GT:Guatemala|GY:Guiana|GN:Guiné|GQ:Guiné Equatorial|GW:Guiné-Bissau|HT:Haiti|HN:Honduras|HU:Hungria|YE:Iémen|MH:Ilhas Marshall|SB:Ilhas Salomão|IN:Índia|ID:Indonésia|IR:Irão|IQ:Iraque|IE:Irlanda|IS:Islândia|IL:Israel|IT:Itália|JM:Jamaica|JP:Japão|JO:Jordânia|KW:Kuwait|LA:Laos|LS:Lesoto|LV:Letónia|LB:Líbano|LR:Libéria|LY:Líbia|LI:Listenstaine|LT:Lituânia|LU:Luxemburgo|MK:Macedónia do Norte|MG:Madagáscar|MY:Malásia|MW:Maláui|MV:Maldivas|ML:Mali|MT:Malta|MA:Marrocos|MU:Maurícia|MR:Mauritânia|MX:México|MM:Mianmar|FM:Micronésia|MZ:Moçambique|MD:Moldávia|MC:Mónaco|MN:Mongólia|ME:Montenegro|NA:Namíbia|NR:Nauru|NP:Nepal|NI:Nicarágua|NE:Níger|NG:Nigéria|NO:Noruega|NZ:Nova Zelândia|OM:Omã|NL:Países Baixos|PW:Palau|PS:Palestina|PA:Panamá|PG:Papua-Nova Guiné|PK:Paquistão|PY:Paraguai|PE:Peru|PL:Polónia|PT:Portugal|KE:Quénia|KG:Quirguistão|KI:Quiribáti|GB:Reino Unido|CF:República Centro-Africana|CZ:Chéquia|DO:República Dominicana|RO:Roménia|RW:Ruanda|RU:Rússia|WS:Samoa|SM:São Marinho|LC:Santa Lúcia|KN:São Cristóvão e Neves|ST:São Tomé e Príncipe|VC:São Vicente e Granadinas|SC:Seicheles|SN:Senegal|SL:Serra Leoa|RS:Sérvia|SG:Singapura|SY:Síria|SO:Somália|LK:Sri Lanca|SD:Sudão|SS:Sudão do Sul|SE:Suécia|CH:Suíça|SR:Suriname|TH:Tailândia|TJ:Tajiquistão|TZ:Tanzânia|TL:Timor-Leste|TG:Togo|TO:Tonga|TT:Trindade e Tobago|TN:Tunísia|TM:Turquemenistão|TR:Turquia|TV:Tuvalu|UA:Ucrânia|UG:Uganda|UY:Uruguai|UZ:Usbequistão|VU:Vanuatu|VA:Vaticano|VE:Venezuela|VN:Vietname|ZM:Zâmbia|ZW:Zimbabué";
+const SECS=15, SHOW=4;
+const emoji=c=>[...c].map(x=>String.fromCodePoint(0x1F1E6+x.charCodeAt(0)-65)).join('');
+let list=RAW.split('|').map(s=>{const[c,n]=s.split(':');return{f:emoji(c),n}});
+let i=0,t=SECS,timer=null,paused=false,phase='idle',voice=null;
+const app=document.getElementById('app');
+const C=2*Math.PI*54;
+
+function shuffle(a){for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function pickVoice(){try{const v=speechSynthesis.getVoices();voice=v.find(x=>x.lang==='pt-PT')||v.find(x=>x.lang.toLowerCase().startsWith('pt-pt'))||v.find(x=>x.lang.startsWith('pt'))||null}catch(e){}}
+try{speechSynthesis.onvoiceschanged=pickVoice;pickVoice()}catch(e){}
+function say(txt){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='pt-PT';if(voice)u.voice=voice;u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+
+function home(){
+  clearInterval(timer);phase='idle';
+  app.innerHTML=`<div class="card"><div class="flag">🌍</div><h1>Que Bandeira É Esta?</h1>
+  <p class="q">Adivinha o país antes de acabar o tempo!</p>
+  <div class="row"><button id="go">▶ Começar</button></div>
+  <p class="count">${list.length} bandeiras do mundo</p></div>`;
+  document.getElementById('go').onclick=()=>{shuffle(list);i=0;show()};
+}
+function show(){
+  if(i>=list.length){app.innerHTML=`<div class="card"><div class="flag">🎉</div><h1>Parabéns!</h1><p class="q">Viste todas as bandeiras do mundo!</p><div class="row"><button id="again">Jogar outra vez</button></div></div>`;document.getElementById('again').onclick=home;return}
+  const x=list[i];t=SECS;phase='count';paused=false;
+  app.innerHTML=`<div class="card"><div class="flag">${x.f}</div>
+  <div class="timer"><svg width="130" height="130" viewBox="0 0 130 130"><circle cx="65" cy="65" r="54" fill="none" stroke="var(--ring)" stroke-width="12"/><circle id="arc" cx="65" cy="65" r="54" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="0" style="transition:stroke-dashoffset 1s linear"/></svg><div class="n" id="n">${t}</div></div>
+  <div class="name" id="name">Que país é este?</div>
+  <div class="row"><button class="alt" id="pause">⏸ Pausa</button><button id="skip">Mostrar ⏭</button></div>
+  <p class="count">${i+1} de ${list.length}</p></div>`;
+  document.getElementById('skip').onclick=reveal;
+  document.getElementById('pause').onclick=e=>{paused=!paused;e.target.textContent=paused?'▶ Continuar':'⏸ Pausa'};
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    if(paused)return;
+    t--;document.getElementById('n').textContent=Math.max(t,0);
+    document.getElementById('arc').style.strokeDashoffset=C*(1-t/SECS);
+    if(t<=0)reveal();
+  },1000);
+}
+function reveal(){
+  clearInterval(timer);phase='reveal';
+  const x=list[i];
+  document.getElementById('n').textContent='🎈';
+  document.getElementById('arc').style.strokeDashoffset=0;
+  document.getElementById('name').textContent=x.n;
+  document.getElementById('skip').textContent='Seguinte ⏭';
+  document.getElementById('skip').onclick=next;
+  document.getElementById('pause').style.display='none';
+  say(x.n);
+  timer=setTimeout(next,SHOW*1000+1500);
+}
+function next(){clearTimeout(timer);clearInterval(timer);i++;show()}
+home();
+</script>
+</body>
+</html>
