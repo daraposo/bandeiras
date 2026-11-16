@@ -27,6 +27,7 @@ h1{font-size:clamp(30px,9vw,44px);margin:8px 0}
 </head>
 <body>
 <div class="app" id="app"></div>
+<div id="dbg" style="position:fixed;bottom:6px;left:0;right:0;font-size:12px;opacity:.7;text-align:center;padding:0 8px"></div>
 <script>
 const RAW="AF:Afeganistão|ZA:África do Sul|AL:Albânia|DE:Alemanha|AD:Andorra|AO:Angola|AG:Antígua e Barbuda|SA:Arábia Saudita|DZ:Argélia|AR:Argentina|AM:Arménia|AU:Austrália|AT:Áustria|AZ:Azerbaijão|BS:Baamas|BD:Bangladeche|BB:Barbados|BH:Barém|BE:Bélgica|BZ:Belize|BJ:Benim|BY:Bielorrússia|BO:Bolívia|BA:Bósnia e Herzegovina|BW:Botsuana|BR:Brasil|BN:Brunei|BG:Bulgária|BF:Burquina Faso|BI:Burúndi|BT:Butão|CV:Cabo Verde|CM:Camarões|KH:Camboja|CA:Canadá|QA:Catar|KZ:Cazaquistão|TD:Chade|CL:Chile|CN:China|CY:Chipre|CO:Colômbia|KM:Comores|CG:Congo|CD:República Democrática do Congo|KP:Coreia do Norte|KR:Coreia do Sul|CI:Costa do Marfim|CR:Costa Rica|HR:Croácia|CU:Cuba|DK:Dinamarca|DJ:Jibuti|DM:Dominica|EG:Egito|SV:El Salvador|AE:Emirados Árabes Unidos|EC:Equador|ER:Eritreia|SK:Eslováquia|SI:Eslovénia|ES:Espanha|US:Estados Unidos|EE:Estónia|SZ:Essuatíni|ET:Etiópia|FJ:Fiji|PH:Filipinas|FI:Finlândia|FR:França|GA:Gabão|GM:Gâmbia|GH:Gana|GE:Geórgia|GD:Granada|GR:Grécia|GT:Guatemala|GY:Guiana|GN:Guiné|GQ:Guiné Equatorial|GW:Guiné-Bissau|HT:Haiti|HN:Honduras|HU:Hungria|YE:Iémen|MH:Ilhas Marshall|SB:Ilhas Salomão|IN:Índia|ID:Indonésia|IR:Irão|IQ:Iraque|IE:Irlanda|IS:Islândia|IL:Israel|IT:Itália|JM:Jamaica|JP:Japão|JO:Jordânia|KW:Kuwait|LA:Laos|LS:Lesoto|LV:Letónia|LB:Líbano|LR:Libéria|LY:Líbia|LI:Listenstaine|LT:Lituânia|LU:Luxemburgo|MK:Macedónia do Norte|MG:Madagáscar|MY:Malásia|MW:Maláui|MV:Maldivas|ML:Mali|MT:Malta|MA:Marrocos|MU:Maurícia|MR:Mauritânia|MX:México|MM:Mianmar|FM:Micronésia|MZ:Moçambique|MD:Moldávia|MC:Mónaco|MN:Mongólia|ME:Montenegro|NA:Namíbia|NR:Nauru|NP:Nepal|NI:Nicarágua|NE:Níger|NG:Nigéria|NO:Noruega|NZ:Nova Zelândia|OM:Omã|NL:Países Baixos|PW:Palau|PS:Palestina|PA:Panamá|PG:Papua-Nova Guiné|PK:Paquistão|PY:Paraguai|PE:Peru|PL:Polónia|PT:Portugal|KE:Quénia|KG:Quirguistão|KI:Quiribáti|GB:Reino Unido|CF:República Centro-Africana|CZ:Chéquia|DO:República Dominicana|RO:Roménia|RW:Ruanda|RU:Rússia|WS:Samoa|SM:São Marinho|LC:Santa Lúcia|KN:São Cristóvão e Neves|ST:São Tomé e Príncipe|VC:São Vicente e Granadinas|SC:Seicheles|SN:Senegal|SL:Serra Leoa|RS:Sérvia|SG:Singapura|SY:Síria|SO:Somália|LK:Sri Lanca|SD:Sudão|SS:Sudão do Sul|SE:Suécia|CH:Suíça|SR:Suriname|TH:Tailândia|TJ:Tajiquistão|TZ:Tanzânia|TL:Timor-Leste|TG:Togo|TO:Tonga|TT:Trindade e Tobago|TN:Tunísia|TM:Turquemenistão|TR:Turquia|TV:Tuvalu|UA:Ucrânia|UG:Uganda|UY:Uruguai|UZ:Usbequistão|VU:Vanuatu|VA:Vaticano|VE:Venezuela|VN:Vietname|ZM:Zâmbia|ZW:Zimbabué";
 const SECS=15, SHOW=4;
@@ -39,15 +40,16 @@ const C=2*Math.PI*54;
 function shuffle(a){for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
 function pickVoice(){try{const v=speechSynthesis.getVoices();voice=v.find(x=>x.lang==='pt-PT')||v.find(x=>x.lang.toLowerCase().startsWith('pt-pt'))||v.find(x=>x.lang.startsWith('pt'))||null}catch(e){}}
 try{speechSynthesis.onvoiceschanged=pickVoice;pickVoice()}catch(e){}
+function dbg(m){const d=document.getElementById('dbg');if(d)d.textContent=m}
 async function say(txt){
   try{
     if(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()){
       const T=Capacitor.registerPlugin('TextToSpeech');
       try{await T.stop()}catch(e){}
       await T.speak({text:txt,lang:'pt-PT',rate:0.9,pitch:1.0,volume:1.0,category:'ambient'});
-      return;
+      dbg('');return;
     }
-  }catch(e){}
+  }catch(e){dbg('Erro de voz: '+(e&&(e.message||e.errorMessage)||e))}
   try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='pt-PT';if(voice)u.voice=voice;u.rate=.9;speechSynthesis.speak(u)}catch(e){}
 }
 
@@ -55,8 +57,9 @@ function home(){
   clearInterval(timer);phase='idle';
   app.innerHTML=`<div class="card"><div class="flag">🌍</div><h1>Que Bandeira É Esta?</h1>
   <p class="q">Adivinha o país antes de acabar o tempo!</p>
-  <div class="row"><button id="go">▶ Começar</button></div>
+  <div class="row"><button id="go">▶ Começar</button><button class="alt" id="tv">🔊 Testar voz</button></div>
   <p class="count">${list.length} bandeiras do mundo</p></div>`;
+  document.getElementById('tv').onclick=()=>say('Portugal');
   document.getElementById('go').onclick=()=>{shuffle(list);i=0;show()};
 }
 function show(){
