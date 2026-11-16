@@ -39,7 +39,17 @@ const C=2*Math.PI*54;
 function shuffle(a){for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
 function pickVoice(){try{const v=speechSynthesis.getVoices();voice=v.find(x=>x.lang==='pt-PT')||v.find(x=>x.lang.toLowerCase().startsWith('pt-pt'))||v.find(x=>x.lang.startsWith('pt'))||null}catch(e){}}
 try{speechSynthesis.onvoiceschanged=pickVoice;pickVoice()}catch(e){}
-function say(txt){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='pt-PT';if(voice)u.voice=voice;u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+async function say(txt){
+  try{
+    if(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()){
+      const T=Capacitor.registerPlugin('TextToSpeech');
+      try{await T.stop()}catch(e){}
+      await T.speak({text:txt,lang:'pt-PT',rate:0.9,pitch:1.0,volume:1.0,category:'ambient'});
+      return;
+    }
+  }catch(e){}
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='pt-PT';if(voice)u.voice=voice;u.rate=.9;speechSynthesis.speak(u)}catch(e){}
+}
 
 function home(){
   clearInterval(timer);phase='idle';
